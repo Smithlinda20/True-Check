@@ -185,25 +185,25 @@ class InvoiceAdmin(admin.ModelAdmin):
 # VerificationResult Admin
 @admin.register(VerificationResult)
 class VerificationResultAdmin(admin.ModelAdmin):
-    list_display = ('check_request_id', 'status', 'risk_level_badge', 'verified_by', 'is_certified', 'verified_at')
+    list_display = ('check_request', 'status', 'risk_level_badge', 'verified_by', 'is_certified', 'verified_at')
     list_filter = ('status', 'risk_level', 'is_certified', 'verified_at')
-    search_fields = ('check_request__request_id', 'check_request__user__email')
+    search_fields = ('check_request__request_id', 'verified_by__username')
     readonly_fields = ('verified_at',)
     
     fieldsets = (
-        ('Request', {'fields': ('check_request',)}),
-        ('Verification', {'fields': ('status', 'risk_level', 'findings')}),
-        ('Certified', {'fields': ('is_certified', 'certificate_url')}),
-        ('Reviewer', {'fields': ('verified_by', 'verified_at')}),
+        ('Verification Info', {'fields': ('check_request', 'verified_by')}),
+        ('Status & Assessment', {'fields': ('status', 'risk_level', 'report_details', 'internal_notes')}),
+        ('Certification', {'fields': ('is_certified', 'certificate_number')}),
+        ('Timestamps', {'fields': ('verified_at',)}),
     )
     ordering = ('-verified_at',)
-    
-    def check_request_id(self, obj):
-        return obj.check_request.request_id
-    check_request_id.short_description = 'Request ID'
-    
+
     def risk_level_badge(self, obj):
-        colors = {'LOW': '#27AE60', 'MEDIUM': '#F39C12', 'HIGH': '#E74C3C'}
+        colors = {
+            'LOW': '#27AE60',
+            'MEDIUM': '#E67E22',
+            'HIGH': '#E74C3C',
+        }
         return format_html(
             '<span style="background-color: {}; color: white; padding: 3px 10px; border-radius: 3px;">{}</span>',
             colors.get(obj.risk_level, '#95A5A6'),
@@ -214,19 +214,15 @@ class VerificationResultAdmin(admin.ModelAdmin):
 # Notification Admin
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
-    list_display = ('title', 'user_email', 'notification_type', 'is_read', 'created_at')
-    list_filter = ('notification_type', 'is_read', 'created_at')
-    search_fields = ('title', 'user__email', 'message')
+    list_display = ('user', 'title', 'is_read', 'created_at')
+    list_filter = ('is_read', 'created_at')
+    search_fields = ('user__email', 'title', 'message')
     readonly_fields = ('created_at',)
     
     fieldsets = (
-        ('Notification', {'fields': ('user', 'title', 'message', 'notification_type')}),
-        ('Link', {'fields': ('check_request',)}),
+        ('Recipient', {'fields': ('user',)}),
+        ('Notification Content', {'fields': ('title', 'message', 'notification_type')}),
         ('Status', {'fields': ('is_read',)}),
-        ('Date', {'fields': ('created_at',)}),
+        ('Timestamps', {'fields': ('created_at',)}),
     )
     ordering = ('-created_at',)
-    
-    def user_email(self, obj):
-        return obj.user.email
-    user_email.short_description = 'User'
