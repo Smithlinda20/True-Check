@@ -102,16 +102,24 @@ DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL:
     # Parse DATABASE_URL for Render PostgreSQL
     db_from_env = urlparse(DATABASE_URL)
+    
+    # Safely strip out query parameters (like ?sslmode=require) from the database name path
+    clean_db_name = db_from_env.path[1:].split('?')[0]
+    
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': db_from_env.path[1:],  # Remove leading slash
+            'NAME': clean_db_name,
             'USER': db_from_env.username,
             'PASSWORD': db_from_env.password,
             'HOST': db_from_env.hostname,
             'PORT': db_from_env.port,
             'CONN_MAX_AGE': 600,
             'ATOMIC_REQUESTS': True,
+            # Force SSL connection mode which is strictly required by Render PostgreSQL
+            'OPTIONS': {
+                'sslmode': 'require',
+            }
         }
     }
 else:
