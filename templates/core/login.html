@@ -1,0 +1,118 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Login - {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 450px;
+        margin: 60px auto;
+        padding: 0 20px;
+    }
+
+    .auth-card {
+        background: white;
+        padding: 50px 30px;
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        animation: slideUp 0.5s ease;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .auth-header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+
+    .auth-header p {
+        color: #999;
+    }
+
+    .auth-divider {
+        text-align: center;
+        margin: 30px 0;
+        position: relative;
+    }
+
+    .auth-divider::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: 1px;
+        background: #eee;
+    }
+
+    .auth-divider span {
+        background: white;
+        padding: 0 15px;
+        color: #999;
+        position: relative;
+    }
+
+    .auth-link {
+        text-align: center;
+        margin-top: 30px;
+        color: #666;
+    }
+
+    .auth-link a {
+        font-weight: 600;
+        text-decoration: underline;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Welcome Back</h1>
+            <p>Sign in to your {{ site_name }} account</p>
+        </div>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_email">Email Address</label>
+                <input type="email" id="id_email" name="email" required placeholder="your@email.com">
+            </div>
+
+            <div class="form-group">
+                <label for="id_password">Password</label>
+                <input type="password" id="id_password" name="password" required placeholder="••••••••">
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            </div>
+        </form>
+
+        <div class="auth-divider">
+            <span>Don't have an account?</span>
+        </div>
+
+        <div class="auth-link">
+            <a href="{% url 'register' %}">Create a new account</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

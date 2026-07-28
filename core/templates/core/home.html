@@ -1,0 +1,1527 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}{{ site_name }} - Professional Background Checks & Verification{% endblock %}
+
+{% block extra_css %}
+<style>
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideInLeft { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slideInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+    @keyframes glow { 0%, 100% { box-shadow: 0 10px 30px rgba(15, 118, 110, 0.15); } 50% { box-shadow: 0 15px 40px rgba(15, 118, 110, 0.3); } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+    .hero {
+        background: linear-gradient(135deg, #0F766E 0%, #0369A1 100%);
+        color: white;
+        padding: 60px 20px 100px;
+        text-align: center;
+        animation: fadeInDown 0.8s ease-in;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .hero-content {
+        max-width: 900px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-logos {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+        margin-bottom: 40px;
+        align-items: center;
+        animation: slideDown 0.8s ease 0.1s backwards;
+    }
+
+    .logo-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .hero-logos img {
+        height: 100px;
+        width: auto;
+        border-radius: 16px;
+        background: rgba(255,255,255,0.98);
+        padding: 12px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+
+    .hero-logos img:hover {
+        transform: scale(1.12);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    }
+
+    .logo-label {
+        font-size: 0.75rem;
+        color: rgba(255,255,255,0.8);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .hero h1 {
+        font-size: 3.8rem;
+        margin-bottom: 16px;
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        line-height: 1.2;
+        animation: slideInLeft 0.8s ease 0.2s backwards;
+    }
+
+    .hero p {
+        font-size: 1.3rem;
+        margin-bottom: 40px;
+        opacity: 0.95;
+        color: white;
+        line-height: 1.6;
+        animation: slideInRight 0.8s ease 0.3s backwards;
+        font-weight: 300;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+        animation: fadeInUp 0.8s ease 0.4s backwards;
+    }
+
+    .btn-cta {
+        padding: 16px 45px;
+        border: none;
+        border-radius: 60px;
+        font-size: 1.05rem;
+        cursor: pointer;
+        transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-block;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-cta::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255,255,255,0.2);
+        transition: left 0.35s ease;
+        z-index: -1;
+    }
+
+    .btn-cta:hover::before {
+        left: 100%;
+    }
+
+    .btn-cta.btn-primary {
+        background: white;
+        color: #0F766E !important;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .btn-cta.btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+    }
+
+    .btn-cta.btn-secondary {
+        background: transparent;
+        color: white;
+        border: 2.5px solid white;
+    }
+
+    .btn-cta.btn-secondary:hover {
+        background: rgba(255,255,255,0.15);
+        transform: translateY(-3px);
+    }
+
+    .stats-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        padding: 80px 20px;
+        background: linear-gradient(135deg, #f8fafc 0%, #f0f5ff 100%);
+    }
+
+    .stat-card {
+        text-align: center;
+        padding: 40px 30px;
+        animation: fadeInUp 0.8s ease;
+        border-radius: 16px;
+        background: white;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        transition: all 0.35s ease;
+        border-top: 4px solid #0F766E;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(15,118,110,0.15);
+        border-top-color: #0369A1;
+    }
+
+    .stat-number {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: #0F766E;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg, #0F766E 0%, #0369A1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+        font-size: 1.05rem;
+        color: #64748b;
+        font-weight: 600;
+    }
+
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        padding: 80px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .service-card {
+        background: white;
+        padding: 40px 30px;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        text-align: center;
+        animation: fadeInUp 0.8s ease;
+        border: 2px solid transparent;
+        position: relative;
+    }
+
+    .service-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #0F766E, #0369A1, #1D4ED8);
+        border-radius: 16px 16px 0 0;
+        opacity: 0;
+        transition: opacity 0.35s ease;
+    }
+
+    .service-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 20px 50px rgba(15,118,110,0.15);
+        border-color: rgba(15,118,110,0.1);
+    }
+
+    .service-card:hover::before {
+        opacity: 1;
+    }
+
+    .service-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #0F766E 0%, #0369A1 100%);
+        color: white;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2rem;
+        margin: 0 auto 20px;
+        transition: all 0.35s ease;
+        box-shadow: 0 8px 20px rgba(15,118,110,0.25);
+    }
+
+    .service-card:hover .service-icon {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 12px 30px rgba(15,118,110,0.4);
+    }
+
+    .service-card h3 {
+        margin: 20px 0 12px;
+        color: #1a2332;
+        font-size: 1.35rem;
+        font-weight: 700;
+    }
+
+    .service-card p {
+        color: #64748b;
+        line-height: 1.7;
+        font-size: 0.95rem;
+    }
+
+    .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        padding: 80px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .pricing-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        animation: fadeInUp 0.8s ease;
+        display: flex;
+        flex-direction: column;
+        border: 2px solid #f0f5ff;
+        position: relative;
+    }
+
+    .pricing-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 20px 50px rgba(15,118,110,0.15);
+        border-color: #0F766E;
+    }
+
+    .pricing-card.featured {
+        transform: scale(1.06);
+        border: 3px solid #0F766E;
+        box-shadow: 0 15px 40px rgba(15,118,110,0.25);
+    }
+
+    .pricing-card.featured:hover {
+        transform: scale(1.06) translateY(-12px);
+    }
+
+    .pricing-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #FFD700;
+        color: #0F766E;
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        z-index: 10;
+    }
+
+    .pricing-header {
+        background: linear-gradient(135deg, #0F766E 0%, #0369A1 100%);
+        color: white;
+        padding: 35px 20px;
+        text-align: center;
+    }
+
+    .pricing-card.featured .pricing-header {
+        background: linear-gradient(135deg, #0369A1 0%, #0F766E 100%);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+
+    .pricing-title {
+        font-size: 1.55rem;
+        margin-bottom: 10px;
+        font-weight: 800;
+    }
+
+    .pricing-price {
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin: 15px 0 5px;
+    }
+
+    .pricing-price span {
+        font-size: 0.95rem;
+        opacity: 0.9;
+        font-weight: 500;
+    }
+
+    .pricing-body {
+        padding: 30px 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pricing-features {
+        list-style: none;
+        margin-bottom: 25px;
+        flex: 1;
+    }
+
+    .pricing-features li {
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f5ff;
+        color: #64748b;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .pricing-features li:before {
+        content: "✓";
+        color: #0F766E;
+        font-weight: 900;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .cta-section {
+        background: linear-gradient(135deg, #0F766E 0%, #0369A1 100%);
+        color: white;
+        padding: 100px 20px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .cta-title {
+        font-size: 2.8rem;
+        margin-bottom: 20px;
+        font-weight: 800;
+        position: relative;
+        z-index: 1;
+    }
+
+    .cta-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 40px;
+        opacity: 0.95;
+        position: relative;
+        z-index: 1;
+        line-height: 1.7;
+    }
+
+    @media (max-width: 768px) {
+        .hero h1 { font-size: 2.2rem; }
+        .hero p { font-size: 1.1rem; }
+        .cta-title { font-size: 2rem; }
+        .pricing-card.featured { transform: scale(1); }
+        .pricing-card.featured:hover { transform: translateY(-12px); }
+        .stat-number { font-size: 2.2rem; }
+        .hero-logos img { height: 80px; }
+        .feature-item { margin-bottom: 30px; }
+        .how-step { margin-bottom: 25px; }
+        .testimonial-card { margin-bottom: 20px; }
+    }
+
+    /* Trust Badges Section */
+    .trust-section {
+        background: white;
+        padding: 50px 20px;
+        border-top: 1px solid #e2e8f0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .trust-badges {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .badge-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 15px;
+        background: #f8fafc;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        text-align: left;
+    }
+
+    .badge-item:hover {
+        background: #eef4ff;
+        transform: translateX(5px);
+    }
+
+    .badge-icon {
+        font-size: 2rem;
+        flex-shrink: 0;
+    }
+
+    .badge-text h4 {
+        margin: 0 0 3px;
+        color: #0F766E;
+        font-size: 0.95rem;
+        font-weight: 700;
+    }
+
+    .badge-text p {
+        margin: 0;
+        color: #64748b;
+        font-size: 0.85rem;
+    }
+
+    /* Features Section */
+    .features-section {
+        padding: 80px 20px;
+        background: linear-gradient(135deg, #f8fafc 0%, #f0f5ff 100%);
+    }
+
+    .features-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .features-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .features-header h2 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1a2332;
+        margin-bottom: 20px;
+    }
+
+    .features-header p {
+        font-size: 1.1rem;
+        color: #64748b;
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.7;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 35px;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        transition: all 0.35s ease;
+        border: 2px solid transparent;
+        animation: slideUp 0.6s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(15,118,110,0.15);
+        border-color: rgba(15,118,110,0.1);
+    }
+
+    .feature-icon {
+        font-size: 2.8rem;
+        margin-bottom: 15px;
+        display: inline-block;
+    }
+
+    .feature-card h3 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a2332;
+        margin-bottom: 12px;
+    }
+
+    .feature-card p {
+        color: #64748b;
+        line-height: 1.7;
+        font-size: 0.95rem;
+    }
+
+    /* How It Works Section */
+    .how-section {
+        padding: 80px 20px;
+        background: white;
+    }
+
+    .how-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .how-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .how-header h2 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1a2332;
+        margin-bottom: 20px;
+    }
+
+    .how-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+    }
+
+    .step-item {
+        position: relative;
+        padding: 30px;
+        background: linear-gradient(135deg, #f8fafc 0%, #f0f5ff 100%);
+        border-radius: 16px;
+        border-left: 4px solid #0F766E;
+        transition: all 0.35s ease;
+        text-align: center;
+        animation: slideUp 0.6s ease;
+    }
+
+    .step-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(15,118,110,0.15);
+    }
+
+    .step-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #0F766E 0%, #0369A1 100%);
+        color: white;
+        border-radius: 50%;
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 15px;
+    }
+
+    .step-item h3 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #1a2332;
+        margin-bottom: 10px;
+    }
+
+    .step-item p {
+        color: #64748b;
+        line-height: 1.6;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    /* Testimonials Section */
+    .testimonials-section {
+        padding: 80px 20px;
+        background: linear-gradient(135deg, #0F766E 0%, #0369A1 100%);
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .testimonials-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: float 8s ease-in-out infinite;
+    }
+
+    .testimonials-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .testimonials-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .testimonials-header h2 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+    }
+
+    .testimonials-header p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.7;
+    }
+
+    .testimonials-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+    }
+
+    .testimonial-card {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        padding: 30px;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.2);
+        transition: all 0.35s ease;
+        animation: slideUp 0.6s ease;
+    }
+
+    .testimonial-card:hover {
+        background: rgba(255,255,255,0.15);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .stars {
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+        letter-spacing: 3px;
+    }
+
+    .testimonial-text {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 15px;
+        opacity: 0.95;
+    }
+
+    .testimonial-author {
+        border-top: 1px solid rgba(255,255,255,0.2);
+        padding-top: 15px;
+    }
+
+    .author-name {
+        font-weight: 700;
+        font-size: 0.95rem;
+        margin-bottom: 3px;
+    }
+
+    .author-title {
+        font-size: 0.85rem;
+        opacity: 0.8;
+    }
+
+    /* Use Cases Section */
+    .use-cases-section {
+        padding: 80px 20px;
+        background: white;
+    }
+
+    .use-cases-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .use-cases-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .use-cases-header h2 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1a2332;
+        margin-bottom: 20px;
+    }
+
+    .use-cases-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+    }
+
+    .use-case-card {
+        background: linear-gradient(135deg, #f8fafc 0%, #f0f5ff 100%);
+        padding: 35px;
+        border-radius: 16px;
+        border: 2px solid #e2e8f0;
+        transition: all 0.35s ease;
+        animation: slideUp 0.6s ease;
+    }
+
+    .use-case-card:hover {
+        background: linear-gradient(135deg, #f0f5ff 0%, #e0ecff 100%);
+        border-color: #0F766E;
+        box-shadow: 0 15px 40px rgba(15,118,110,0.15);
+        transform: translateY(-8px);
+    }
+
+    .use-case-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        display: inline-block;
+    }
+
+    .use-case-card h3 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #0F766E;
+        margin-bottom: 12px;
+    }
+
+    .use-case-card p {
+        color: #64748b;
+        line-height: 1.6;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    /* Security Section */
+    .security-section {
+        padding: 80px 20px;
+        background: linear-gradient(135deg, #f8fafc 0%, #f0f5ff 100%);
+    }
+
+    .security-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .security-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+    }
+
+    .security-item {
+        background: white;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        transition: all 0.35s ease;
+        text-align: center;
+        border-top: 3px solid #0F766E;
+        animation: slideUp 0.6s ease;
+    }
+
+    .security-item:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(15,118,110,0.15);
+    }
+
+    .security-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+
+    .security-item h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #0F766E;
+        margin-bottom: 10px;
+    }
+
+    .security-item p {
+        color: #64748b;
+        line-height: 1.6;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    /* FAQ Section */
+    .faq-section {
+        padding: 80px 20px;
+        background: white;
+    }
+
+    .faq-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .faq-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .faq-header h2 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1a2332;
+        margin-bottom: 20px;
+    }
+
+    .faq-item {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        overflow: hidden;
+        transition: all 0.35s ease;
+        animation: slideUp 0.6s ease;
+    }
+
+    .faq-item:hover {
+        border-color: #0F766E;
+        box-shadow: 0 8px 25px rgba(15,118,110,0.1);
+    }
+
+    .faq-question {
+        padding: 20px;
+        background: white;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        color: #1a2332;
+        user-select: none;
+        transition: all 0.3s ease;
+    }
+
+    .faq-item.active .faq-question {
+        background: #f0f5ff;
+        color: #0F766E;
+    }
+
+    .faq-toggle {
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+    }
+
+    .faq-item.active .faq-toggle {
+        transform: rotate(180deg);
+    }
+
+    .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.35s ease;
+        background: white;
+    }
+
+    .faq-item.active .faq-answer {
+        max-height: 500px;
+        padding: 0 20px 20px;
+    }
+
+    .faq-answer p {
+        color: #64748b;
+        line-height: 1.7;
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 400;
+    }
+
+    /* Mini CTA Cards */
+    .mini-cta-section {
+        padding: 60px 20px;
+        background: linear-gradient(135deg, #0F766E 0%, #0369A1 100%);
+        color: white;
+    }
+
+    .mini-cta-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .mini-cta-card {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        padding: 25px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.2);
+        transition: all 0.35s ease;
+        text-align: center;
+    }
+
+    .mini-cta-card:hover {
+        background: rgba(255,255,255,0.15);
+        transform: translateY(-5px);
+    }
+
+    .mini-cta-icon {
+        font-size: 2.5rem;
+        margin-bottom: 12px;
+    }
+
+    .mini-cta-card h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .mini-cta-card p {
+        font-size: 0.9rem;
+        opacity: 0.95;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero">
+    <div class="hero-content">
+        <div class="hero-logos">
+            <div class="logo-wrapper">
+                <img src="{% static 'img/Truecheck.png' %}" alt="TrueCheck logo" style="height: 110px;">
+                <span class="logo-label">TrueCheck</span>
+            </div>
+            <div style="font-size: 2rem; opacity: 0.5;">×</div>
+            <div class="logo-wrapper">
+                <img src="{% static 'img/Truetrace-solution.jpg' %}" alt="TrueTrace Solutions logo" style="height: 110px;">
+                <span class="logo-label">TrueTrace Solutions</span>
+            </div>
+        </div>
+        <h1>Professional Verification Services for Modern Teams</h1>
+        <p>TrueCheck helps employers, recruiters, and organizations verify candidates and partners with clarity, speed, and confidence. Powered by TrueTrace Solutions' security expertise.</p>
+        <div class="hero-buttons">
+            {% if user.is_authenticated %}
+                <a href="{% url 'request_check' %}" class="btn-cta btn-primary">Start a Check Now</a>
+            {% else %}
+                <a href="{% url 'register' %}" class="btn-cta btn-primary">Get Started Free</a>
+            {% endif %}
+            <a href="{% url 'pricing' %}" class="btn-cta btn-secondary">View Pricing</a>
+        </div>
+    </div>
+</div>
+
+<!-- Trust Badges Section -->
+<div class="trust-section">
+    <div class="trust-badges">
+        <div class="badge-item">
+            <div class="badge-icon">✓</div>
+            <div class="badge-text">
+                <h4>ISO Compliant</h4>
+                <p>Industry standards</p>
+            </div>
+        </div>
+        <div class="badge-item">
+            <div class="badge-icon">🔒</div>
+            <div class="badge-text">
+                <h4>Data Secure</h4>
+                <p>Encrypted & protected</p>
+            </div>
+        </div>
+        <div class="badge-item">
+            <div class="badge-icon">⚡</div>
+            <div class="badge-text">
+                <h4>Fast Results</h4>
+                <p>24-48 hour turnaround</p>
+            </div>
+        </div>
+        <div class="badge-item">
+            <div class="badge-icon">👥</div>
+            <div class="badge-text">
+                <h4>Expert Support</h4>
+                <p>Dedicated team available</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Section -->
+<div class="stats-section">
+    <div class="stat-card">
+        <div class="stat-number">{{ total_checks|default:"5000+" }}</div>
+        <div class="stat-label">Checks Completed</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ total_users|default:"1500+" }}</div>
+        <div class="stat-label">Active Users</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ completed_checks|default:"99.8%" }}</div>
+        <div class="stat-label">Completion Rate</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">24hrs</div>
+        <div class="stat-label">Avg Processing Time</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">15+</div>
+        <div class="stat-label">Years of Experience</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">50+</div>
+        <div class="stat-label">Client Organizations</div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="features-container">
+        <div class="features-header">
+            <h2>Why Choose TrueCheck?</h2>
+            <p>We combine technology, expertise, and ethical standards to deliver the most reliable verification services in Nigeria.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Accurate Results</h3>
+                <p>Our thorough verification process ensures 99.8% accuracy with multi-source validation and expert review by trained professionals.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Lightning Fast</h3>
+                <p>Get results in 24-48 hours with our streamlined processes and dedicated team working around the clock.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Data Protection</h3>
+                <p>Bank-level encryption and compliance with international data protection standards keep sensitive information safe.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3>Affordable Pricing</h3>
+                <p>Transparent, competitive pricing with no hidden fees. Scale your verification needs without breaking the bank.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Detailed Reports</h3>
+                <p>Comprehensive, easy-to-understand reports with color-coded findings and actionable insights for informed decisions.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤝</div>
+                <h3>Expert Support</h3>
+                <p>Dedicated account managers and responsive support team ready to help you navigate every step of the process.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section style="padding: 80px 20px; max-width: 1200px; margin: 0 auto;">
+    <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 20px; font-weight: 800; color: #1a2332;">Our Verification Services</h2>
+    <p style="text-align: center; max-width: 750px; margin: 0 auto 60px; color: #64748b; font-size: 1.1rem; line-height: 1.7;">Comprehensive screening packages from criminal history checks to credential verification, supporting your hiring and compliance needs.</p>
+    <div class="services-grid">
+        {% for service in services %}
+        <div class="service-card">
+            <div class="service-icon">
+                {% if 'CRIMINAL' in service.name %}
+                    🔍
+                {% elif 'EMPLOYMENT' in service.name %}
+                    💼
+                {% elif 'EDUCATION' in service.name %}
+                    🎓
+                {% elif 'REFERENCE' in service.name %}
+                    ⭐
+                {% elif 'IDENTITY' in service.name %}
+                    🆔
+                {% else %}
+                    💊
+                {% endif %}
+            </div>
+            <h3>{{ service.get_name_display }}</h3>
+            <p>{{ service.description }}</p>
+            <p style="color: #0F766E; font-weight: 600; margin-top: 15px;">₦{{ service.base_price }} per check</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-section">
+    <div class="how-container">
+        <div class="how-header">
+            <h2>How TrueCheck Works</h2>
+            <p style="font-size: 1.1rem; color: #64748b; max-width: 700px; margin: 0 auto; line-height: 1.7;">A simple, transparent process that gets you verified results in minutes, not weeks.</p>
+        </div>
+        <div class="how-steps">
+            <div class="step-item">
+                <div class="step-number">1</div>
+                <h3>Request a Check</h3>
+                <p>Choose your verification package and provide subject information through our secure platform.</p>
+            </div>
+            <div class="step-item">
+                <div class="step-number">2</div>
+                <h3>Verification Process</h3>
+                <p>Our expert team conducts thorough investigations using multiple trusted sources and databases.</p>
+            </div>
+            <div class="step-item">
+                <div class="step-number">3</div>
+                <h3>Review & Report</h3>
+                <p>Quality assurance team reviews findings and compiles a detailed, easy-to-understand report.</p>
+            </div>
+            <div class="step-item">
+                <div class="step-number">4</div>
+                <h3>Get Results</h3>
+                <p>Access your comprehensive report instantly through your dashboard anytime, anywhere.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Use Cases Section -->
+<section class="use-cases-section">
+    <div class="use-cases-container">
+        <div class="use-cases-header">
+            <h2>Industry Solutions</h2>
+            <p style="font-size: 1.1rem; color: #64748b; max-width: 700px; margin: 0 auto; line-height: 1.7;">TrueCheck serves diverse industries with tailored verification solutions.</p>
+        </div>
+        <div class="use-cases-grid">
+            <div class="use-case-card">
+                <div class="use-case-icon">🏢</div>
+                <h3>HR & Recruitment</h3>
+                <p>Pre-employment screening for reliable hiring decisions and risk mitigation.</p>
+            </div>
+            <div class="use-case-card">
+                <div class="use-case-icon">🏦</div>
+                <h3>Financial Services</h3>
+                <p>Compliance and due diligence checks for regulated financial operations.</p>
+            </div>
+            <div class="use-case-card">
+                <div class="use-case-icon">🏥</div>
+                <h3>Healthcare</h3>
+                <p>Credential and background verification for medical professionals and staff.</p>
+            </div>
+            <div class="use-case-card">
+                <div class="use-case-icon">🏫</div>
+                <h3>Education</h3>
+                <p>Staff screening to ensure safe, trustworthy educational environments.</p>
+            </div>
+            <div class="use-case-card">
+                <div class="use-case-icon">🏠</div>
+                <h3>Real Estate</h3>
+                <p>Tenant screening and property owner verification for secure transactions.</p>
+            </div>
+            <div class="use-case-card">
+                <div class="use-case-icon">🛡️</div>
+                <h3>Security</h3>
+                <p>Personnel screening for security-sensitive positions and operations.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section">
+    <div class="testimonials-container">
+        <div class="testimonials-header">
+            <h2>What Our Clients Say</h2>
+            <p>Real feedback from organizations that trust TrueCheck for their verification needs.</p>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"TrueCheck made our hiring process so much faster and safer. The reports are detailed and actionable. Highly recommended!"</p>
+                <div class="testimonial-author">
+                    <div class="author-name">Chioma Adeleke</div>
+                    <div class="author-title">HR Manager, Tech Startup</div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"We've been using TrueCheck for 2 years now. The accuracy and speed are unmatched. Best investment in our compliance process."</p>
+                <div class="testimonial-author">
+                    <div class="author-name">Emeka Okoye</div>
+                    <div class="author-title">Head of Recruitment, Financial Corp</div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"The support team is incredible. They answered all my questions and made implementation seamless. Thank you!"</p>
+                <div class="testimonial-author">
+                    <div class="author-name">Aisha Ibrahim</div>
+                    <div class="author-title">Operations Director, E-commerce</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mini CTA Section -->
+<div class="mini-cta-section">
+    <div class="mini-cta-grid">
+        <div class="mini-cta-card">
+            <div class="mini-cta-icon">📞</div>
+            <h3>Expert Consultation</h3>
+            <p>Need help choosing the right package? Contact our team for personalized advice.</p>
+        </div>
+        <div class="mini-cta-card">
+            <div class="mini-cta-icon">📚</div>
+            <h3>Learn More</h3>
+            <p>Explore our detailed guides and resources on best verification practices.</p>
+        </div>
+        <div class="mini-cta-card">
+            <div class="mini-cta-icon">🎁</div>
+            <h3>Special Offers</h3>
+            <p>Volume discounts and enterprise packages available for large organizations.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Security & Compliance Section -->
+<section class="security-section">
+    <div class="security-container">
+        <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 20px; font-weight: 800; color: #1a2332;">Security & Compliance</h2>
+        <p style="text-align: center; max-width: 700px; margin: 0 auto 60px; color: #64748b; font-size: 1.1rem; line-height: 1.7;">Your data security is our top priority. We comply with international standards and regulations.</p>
+        <div class="security-grid">
+            <div class="security-item">
+                <div class="security-icon">🔐</div>
+                <h3>Encryption</h3>
+                <p>256-bit SSL/TLS encryption for all data transmission and storage protection.</p>
+            </div>
+            <div class="security-item">
+                <div class="security-icon">✓</div>
+                <h3>GDPR Compliant</h3>
+                <p>Full compliance with global data protection regulations and privacy laws.</p>
+            </div>
+            <div class="security-item">
+                <div class="security-icon">🛡️</div>
+                <h3>Regular Audits</h3>
+                <p>Third-party security audits and penetration testing ensure system integrity.</p>
+            </div>
+            <div class="security-item">
+                <div class="security-icon">📋</div>
+                <h3>Data Retention</h3>
+                <p>Clear policies on data retention, access controls, and secure deletion procedures.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section style="padding: 80px 20px; max-width: 1200px; margin: 0 auto;">
+    <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 20px; font-weight: 800; color: #1a2332;">Meet the Team</h2>
+    <p style="text-align: center; max-width: 760px; margin: 0 auto 60px; color: #64748b; font-size: 1.1rem; line-height: 1.7;">A focused leadership and advisory team supporting TrueCheck with security, intelligence, risk, and client success expertise.</p>
+    <div class="services-grid" style="padding-top: 0;">
+        <div class="service-card">
+            <img src="{% static 'img/team/ceo.jpg' %}" alt="Prince Olaoye Emmanuel Adebowale" style="width:100%; max-width:220px; height:220px; object-fit:cover; border-radius:16px; margin-bottom:16px;">
+            <h3>Prince Olaoye Emmanuel Adebowale</h3>
+            <p style="font-weight:600; color:#0F766E; margin-bottom:10px;">CEO / Lead Consultant</p>
+            <p>Criminologist, security consultant, and behavioral intelligence specialist leading TrueTrace Solutions' professional verification and security operations.</p>
+            <button class="btn-cta btn-primary" type="button" onclick="document.getElementById('ceoModal').style.display='flex'" style="margin-top: auto; width: 100%; justify-content: center;">Read More</button>
+        </div>
+        <div class="service-card">
+            <img src="{% static 'img/team/member-2.jpg' %}" alt="Johnson Oluwabusayo Docars" style="width:100%; max-width:220px; height:220px; object-fit:cover; border-radius:16px; margin-bottom:16px;">
+            <h3>Johnson Oluwabusayo Docars</h3>
+            <p style="font-weight:600; color:#0F766E; margin-bottom:10px;">Marketing & Strategic Officer</p>
+            <p>Supports market growth, partnerships, and strategic engagement across the TrueCheck network and service delivery channels.</p>
+        </div>
+        <div class="service-card">
+            <img src="{% static 'img/team/member-3.jpg' %}" alt="DSP. Victor Momodu" style="width:100%; max-width:220px; height:220px; object-fit:cover; border-radius:16px; margin-bottom:16px;">
+            <h3>DSP. Victor Momodu. CC, CPSO, HECPO (PSU)</h3>
+            <p style="font-weight:600; color:#0F766E; margin-bottom:10px;">Information Security & Risk Lead</p>
+            <p>Brings expertise in information security, vulnerability management, risk assessment, and security operations.</p>
+        </div>
+        <div class="service-card">
+            <img src="{% static 'img/team/member-4.jpg' %}" alt="Shehu AbdulHameed O." style="width:100%; max-width:220px; height:220px; object-fit:cover; border-radius:16px; margin-bottom:16px;">
+            <h3>Shehu AbdulHameed .O</h3>
+            <p style="font-weight:600; color:#0F766E; margin-bottom:10px;">TTS Consultant</p>
+            <p>Provides advisory support to clients and project delivery teams on verification excellence and business solutions.</p>
+        </div>
+    </div>
+</section>
+
+<div id="ceoModal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.7); align-items:center; justify-content:center; z-index:2000; padding:20px;">
+    <div style="background:white; max-width:700px; width:100%; border-radius:16px; padding:30px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.25);">
+        <button type="button" onclick="document.getElementById('ceoModal').style.display='none'" style="position:absolute; top:15px; right:15px; border:none; background:#f1f5f9; width:36px; height:36px; border-radius:50%; cursor:pointer; font-size:1.2rem;">×</button>
+        <div style="display:flex; align-items:center; gap:16px; margin-bottom:16px; flex-wrap:wrap;">
+            <img src="{% static 'img/team/ceo.jpg' %}" alt="Prince Olaoye Emmanuel Adebowale" style="width:120px; height:120px; object-fit:cover; border-radius:16px;">
+            <div>
+                <h3 style="margin:0;">Prince Olaoye Emmanuel Adebowale</h3>
+                <p style="margin:0; color:#0F766E; font-weight:600;">CEO / Lead Consultant, TrueTrace Solutions</p>
+            </div>
+        </div>
+        <p style="color:#475569; line-height:1.7;">Prince Olaoye Emmanuel Adebowale is a criminologist, security consultant, behavioral intelligence specialist, and security trainer with experience across intelligence-led security operations, background investigations, protective security, and crime prevention. He leads TrueTrace Solutions' work in background checks, vetting, due diligence, executive protection, and organizational security.</p>
+        <div style="margin-top:18px; padding:16px 18px; background:#f8fafc; border-left:4px solid #0F766E; border-radius:10px;">
+            <p style="margin:0 0 8px; font-weight:700; color:#0F766E;">Professional background</p>
+            <ul style="margin:0; padding-left:18px; color:#475569; line-height:1.7;">
+                <li>CEO/Lead Consultant of TrueTrace Solutions Ltd, a security consulting firm focused on background checks, vetting, risk assessment, corporate investigations, executive protection, and behavioral intelligence.</li>
+                <li>Passionate about professionalizing security standards in Africa through training and capacity building.</li>
+                <li>Delivered specialized training in hostile environment close protection operations, intelligence-led security, behavioral intelligence, threat detection, security risk management, executive protection, event security, and background screening.</li>
+                <li>Mentored hundreds of criminology and security professionals with practical and ethical standards aligned to modern security practice.</li>
+            </ul>
+        </div>
+        <div style="margin-top:16px; padding:16px 18px; background:#f8fafc; border-left:4px solid #0369A1; border-radius:10px;">
+            <p style="margin:0 0 8px; font-weight:700; color:#0369A1;">Core expertise</p>
+            <p style="margin:0; color:#475569; line-height:1.7;">Executive protection, background checks, vetting and due diligence, criminal intelligence, behavioral intelligence, security risk assessment, physical security operations, security training, corporate consulting, and OSINT.</p>
+        </div>
+        <div style="margin-top:16px; padding:16px 18px; background:#f8fafc; border-left:4px solid #1D4ED8; border-radius:10px;">
+            <p style="margin:0 0 8px; font-weight:700; color:#1D4ED8;">Professional philosophy</p>
+            <p style="margin:0; color:#475569; line-height:1.7;">"Security is not merely the presence of guards; it is the intelligent management of people, information, risks, and decisions before threats become incidents."</p>
+        </div>
+    </div>
+</div>
+
+<!-- Partners Section -->
+<section style="padding: 80px 20px; background: linear-gradient(135deg, #f8fafc 0%, #f0f5ff 100%);">
+    <div style="max-width:1200px; margin:0 auto;">
+        <h2 style="text-align:center; font-size:2.5rem; margin-bottom:20px; font-weight: 800; color: #1a2332;">Our Partners</h2>
+        <p style="text-align:center; max-width:760px; margin:0 auto 60px; color:#64748b; font-size: 1.1rem; line-height: 1.7;">Trusted collaborations that support TrueTrace Solutions and TrueCheck in delivering professional verification and security services.</p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:25px;">
+            {% for image in partner_images %}
+            <div style="background:white; padding:24px; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.08); display:flex; align-items:center; justify-content:center; min-height:180px; transition: all 0.35s ease; border: 2px solid transparent;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 15px 40px rgba(15,118,110,0.15)'; this.style.borderColor='rgba(15,118,110,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'; this.style.borderColor='transparent'">
+                <img src="{% static 'img/partners/'|add:image %}" alt="Partner" style="max-width:100%; max-height:140px; object-fit:contain;">
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <div class="faq-container">
+        <div class="faq-header">
+            <h2>Frequently Asked Questions</h2>
+            <p style="font-size: 1.1rem; color: #64748b; max-width: 700px; margin: 0 auto; line-height: 1.7;">Everything you need to know about TrueCheck's verification services.</p>
+        </div>
+        <div class="faq-items" id="faqContainer">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>How long does a background check typically take?</span>
+                    <span class="faq-toggle">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Most background checks are completed within 24-48 hours. Complex cases may take up to 72 hours. You'll receive email updates at each stage of the process.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What information do I need to request a check?</span>
+                    <span class="faq-toggle">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>You'll need the subject's full name, date of birth, email address, and phone number. For employment verification, we may need additional company details. The more accurate the information, the faster we can complete the check.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Is my data secure with TrueCheck?</span>
+                    <span class="faq-toggle">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Absolutely. We use 256-bit SSL/TLS encryption, comply with GDPR and international data protection standards, and undergo regular third-party security audits. Your data is treated with the utmost confidentiality.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Can I get a bulk discount for multiple checks?</span>
+                    <span class="faq-toggle">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes! We offer significant volume discounts and custom enterprise packages. Contact our sales team for a personalized quote based on your organization's needs.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What if I disagree with the findings?</span>
+                    <span class="faq-toggle">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>We stand behind our results with a comprehensive review process. If you believe there's an error, submit a dispute through your dashboard and our expert team will reinvestigate at no additional cost.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Can I integrate TrueCheck with my HR system?</span>
+                    <span class="faq-toggle">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes, we offer API integration for popular HR platforms. Contact our technical team to discuss integration options that work best for your system.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section style="background: linear-gradient(135deg, #f8fafc 0%, #f0f5ff 100%); padding: 80px 20px;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 20px; font-weight: 800; color: #1a2332;">Simple, Transparent Pricing</h2>
+        <p style="text-align: center; max-width: 760px; margin: 0 auto 60px; color: #64748b; font-size: 1.1rem; line-height: 1.7;">Affordable verification packages tailored for growing teams and established organizations across Nigeria.</p>
+        <div class="pricing-grid">
+            {% for package in packages %}
+            <div class="pricing-card {% if package.package_type == 'STANDARD' %}featured{% endif %}">
+                {% if package.discount_percentage > 0 %}<div class="pricing-badge">Save {{ package.discount_percentage }}%</div>{% endif %}
+                <div class="pricing-header">
+                    <h3 class="pricing-title">{{ package.name }}</h3>
+                    <div class="pricing-price">
+                        ₦{{ package.get_discounted_price|floatformat:0 }}
+                        <span>one-time</span>
+                    </div>
+                </div>
+                <div class="pricing-body">
+                    <ul class="pricing-features">
+                        {% for feature in package.features %}
+                            <li>{{ feature }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'request_check' %}" class="btn-cta btn-primary" style="width: 100%; text-align: center;">Choose Plan</a>
+                    {% else %}
+                        <a href="{% url 'register' %}" class="btn-cta btn-primary" style="width: 100%; text-align: center;">Sign Up to Use</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Final CTA Section -->
+<div class="cta-section">
+    <h2 class="cta-title">Ready to Verify Your Next Hire?</h2>
+    <p class="cta-subtitle">Join thousands of organizations that trust TrueCheck for professional, reliable background verification. Powered by {{ site_owner }}'s expert team.</p>
+    {% if user.is_authenticated %}
+        <a href="{% url 'request_check' %}" class="btn-cta btn-secondary">Start a Check Now</a>
+    {% else %}
+        <a href="{% url 'register' %}" class="btn-cta btn-secondary">Create Free Account</a>
+    {% endif %}
+</div>
+
+<script>
+// FAQ Accordion
+document.querySelectorAll('.faq-question').forEach(question => {
+    question.addEventListener('click', function() {
+        const faqItem = this.closest('.faq-item');
+        const isActive = faqItem.classList.contains('active');
+        
+        // Close all items
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // Open clicked item if it wasn't active
+        if (!isActive) {
+            faqItem.classList.add('active');
+        }
+    });
+});
+</script>
+{% endblock %}

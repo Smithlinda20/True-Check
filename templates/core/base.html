@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ site_name }} - Background Check & Verification Services{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <a href="{% url 'home' %}" class="brand-logo">
+                    <img src="{% static 'img/Truecheck.png' %}" alt="{{ site_name }} logo" class="brand-icon-img" style="height:44px; width:auto;">
+                    <img src="{% static 'img/Truetrace-solution.jpg' %}" alt="{{ site_owner }} logo" class="brand-icon-img" style="height:44px; width:auto; border-radius:50%;">
+                    <span class="brand-text">{{ site_name }}</span>
+                </a>
+            </div>
+            
+            <div class="navbar-menu" id="navbarMenu">
+                <div class="navbar-nav">
+                    <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
+                    <a href="{% url 'services' %}" class="nav-link {% if request.resolver_match.url_name == 'services' %}active{% endif %}">Services</a>
+                    <a href="{% url 'pricing' %}" class="nav-link {% if request.resolver_match.url_name == 'pricing' %}active{% endif %}">Pricing</a>
+                    
+                    {% if user.is_authenticated %}
+                        <div class="nav-divider"></div>
+                        <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
+                        <a href="{% url 'my_checks' %}" class="nav-link {% if request.resolver_match.url_name == 'my_checks' %}active{% endif %}">My Checks</a>
+                        <a href="{% url 'profile' %}" class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a>
+                        
+                        <div class="nav-user">
+                            <div class="nav-user-info">
+                                <span class="nav-user-name">{{ user.email }}</span>
+                                <a href="{% url 'logout' %}" class="nav-link logout">Logout</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="nav-divider"></div>
+                        <a href="{% url 'login' %}" class="nav-link">Login</a>
+                        <a href="{% url 'register' %}" class="btn-primary" style="padding: 12px 28px;">Sign Up</a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="navbar-toggle" id="navbarToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible" role="alert">
+                    {{ message }}
+                    <button type="button" class="alert-close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>{{ site_name }}</h4>
+                <p>{{ site_tagline }}. We deliver dependable verification and recruitment support for businesses and individuals.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link" title="Facebook">f</a>
+                    <a href="#" class="social-link" title="Twitter">𝕏</a>
+                    <a href="#" class="social-link" title="LinkedIn">in</a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h5>Quick Links</h5>
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'services' %}">Services</a></li>
+                    <li><a href="{% url 'pricing' %}">Pricing</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h5>Services</h5>
+                <ul>
+                    <li><a href="#criminal">Criminal Check</a></li>
+                    <li><a href="#employment">Employment Verification</a></li>
+                    <li><a href="#education">Education Verification</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h5>Legal</h5>
+                <ul>
+                    <li><a href="#privacy">Privacy Policy</a></li>
+                    <li><a href="#terms">Terms & Conditions</a></li>
+                    <li><a href="#contact">Contact Us</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 {{ site_name }}. Powered by {{ site_owner }}. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

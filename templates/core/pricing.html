@@ -1,0 +1,323 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Pricing - {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .pricing-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 20px;
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .pricing-hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+
+    .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto 60px;
+        padding: 0 20px;
+    }
+
+    .pricing-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pricing-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .pricing-card.featured {
+        border: 3px solid #667eea;
+        transform: scale(1.05);
+    }
+
+    .pricing-card.featured:hover {
+        transform: scale(1.05) translateY(-10px);
+    }
+
+    .pricing-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px 20px;
+        text-align: center;
+    }
+
+    .pricing-card.featured .pricing-header {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+
+    .pricing-title {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+
+    .pricing-subtitle {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin-bottom: 15px;
+    }
+
+    .pricing-price {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .pricing-price span {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+
+    .pricing-discount {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        display: inline-block;
+    }
+
+    .pricing-body {
+        padding: 30px 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pricing-features {
+        list-style: none;
+        margin-bottom: 30px;
+        flex: 1;
+    }
+
+    .pricing-features li {
+        padding: 12px 0;
+        border-bottom: 1px solid #eee;
+        color: #666;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: start;
+        gap: 10px;
+    }
+
+    .pricing-features li:last-child {
+        border-bottom: none;
+    }
+
+    .pricing-features li:before {
+        content: "✓";
+        color: #27AE60;
+        font-weight: bold;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .pricing-button {
+        width: 100%;
+    }
+
+    .faq-section {
+        max-width: 800px;
+        margin: 80px auto;
+        padding: 0 20px;
+    }
+
+    .faq-title {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 40px;
+    }
+
+    .faq-item {
+        margin-bottom: 20px;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .faq-question {
+        padding: 20px;
+        cursor: pointer;
+        font-weight: 600;
+        color: #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background 0.3s ease;
+    }
+
+    .faq-question:hover {
+        background: #f8f9fa;
+    }
+
+    .faq-icon {
+        font-size: 1.3rem;
+        transition: transform 0.3s ease;
+    }
+
+    .faq-item.active .faq-icon {
+        transform: rotate(180deg);
+    }
+
+    .faq-answer {
+        padding: 0 20px;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        color: #666;
+    }
+
+    .faq-item.active .faq-answer {
+        padding: 20px;
+        max-height: 500px;
+    }
+
+    @media (max-width: 768px) {
+        .pricing-card.featured {
+            transform: scale(1);
+        }
+
+        .pricing-card.featured:hover {
+            transform: translateY(-10px);
+        }
+
+        .pricing-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Pricing Hero -->
+<div class="pricing-hero">
+    <h1>Simple, Transparent Pricing</h1>
+    <p style="font-size: 1.2rem;">Choose a practical plan for hiring, compliance, and partner verification needs in Nigeria.</p>
+</div>
+
+<!-- Pricing Cards -->
+<div class="pricing-grid">
+    {% for package in packages %}
+    <div class="pricing-card {% if package.package_type == 'STANDARD' %}featured{% endif %}">
+        <div class="pricing-header">
+            <div class="pricing-title">{{ package.name }}</div>
+            <div class="pricing-subtitle">{{ package.get_package_type_display }}</div>
+            <div class="pricing-price">
+                ₦{{ package.get_discounted_price|floatformat:2 }}
+                <span>one-time</span>
+            </div>
+            {% if package.discount_percentage > 0 %}
+                <div class="pricing-discount">Save {{ package.discount_percentage }}%</div>
+            {% endif %}
+        </div>
+
+        <div class="pricing-body">
+            <p style="color: #666; margin-bottom: 20px; font-size: 0.95rem;">{{ package.description }}</p>
+
+            <ul class="pricing-features">
+                {% for feature in package.features %}
+                    <li>{{ feature }}</li>
+                {% endfor %}
+            </ul>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'request_check' %}" class="btn btn-primary pricing-button">Choose Plan</a>
+            {% else %}
+                <a href="{% url 'register' %}" class="btn btn-primary pricing-button">Get Started</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- FAQ Section -->
+<div class="faq-section">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+        <div class="faq-question">
+            <span>How long does a background check take?</span>
+            <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+            Most background checks are completed within 24-48 business hours. Premium services may take slightly longer depending on the thoroughness of the verification required.
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-question">
+            <span>What information do you need?</span>
+            <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+            We typically need the applicant's full name, date of birth, address, email, and phone number. Additional information may be required depending on the service selected.
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-question">
+            <span>Is my information secure?</span>
+            <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+            Yes, we use industry-standard encryption and security measures to protect all personal information. We comply with all relevant privacy regulations and data protection laws.
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-question">
+            <span>Can I cancel a request?</span>
+            <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+            You can cancel a request if it hasn't started processing yet. Once processing begins, cancellations may not be possible, but we'll work with you to find solutions.
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-question">
+            <span>Do you offer bulk discounts?</span>
+            <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+            Yes! For Enterprise plans and bulk orders, we offer special pricing. Please contact our sales team for a custom quote.
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-question">
+            <span>What payment methods do you accept?</span>
+            <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+            We accept all major credit cards, debit cards, bank transfers, and PayPal. Invoicing options are available for enterprise customers.
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.faq-question').forEach(question => {
+    question.addEventListener('click', function() {
+        const item = this.parentElement;
+        item.classList.toggle('active');
+    });
+});
+</script>
+{% endblock %}

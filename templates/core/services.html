@@ -1,0 +1,55 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Our Services - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto; padding: 80px 20px;">
+    <h1 style="text-align: center; font-size: 2.5rem; margin-bottom: 20px;">Our Services</h1>
+    <p style="text-align: center; color: #666; font-size: 1.2rem; margin-bottom: 60px;">Comprehensive verification solutions powered by {{ site_owner }} for trusted hiring and due diligence.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
+        {% for service in services %}
+        <div class="card">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 2rem; margin-bottom: 15px;">
+                    {% if 'CRIMINAL' in service.name %}
+                        🔍
+                    {% elif 'EMPLOYMENT' in service.name %}
+                        💼
+                    {% elif 'EDUCATION' in service.name %}
+                        🎓
+                    {% elif 'REFERENCE' in service.name %}
+                        ⭐
+                    {% elif 'IDENTITY' in service.name %}
+                        🆔
+                    {% else %}
+                        💊
+                    {% endif %}
+                </div>
+                <h3>{{ service.get_name_display }}</h3>
+            </div>
+            
+            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">{{ service.description }}</p>
+            
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                <div style="color: #667eea; font-weight: 600; font-size: 1.3rem;">
+                    Starting at ₦{{ service.base_price }}
+                </div>
+                <div style="color: #999; font-size: 0.9rem;">
+                    Processing time: {{ service.processing_time_days }} business days
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'request_check' %}" class="btn btn-primary btn-block">Request Service</a>
+                {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-primary btn-block">Learn More</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

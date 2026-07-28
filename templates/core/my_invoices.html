@@ -1,0 +1,206 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}My Invoices - {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .invoices-container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 0 20px 40px;
+    }
+
+    .invoices-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .invoices-header h1 {
+        font-size: 2rem;
+    }
+
+    .invoices-table {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    thead tr {
+        background: #f8f9fa;
+        border-bottom: 2px solid #eee;
+    }
+
+    th {
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        color: #333;
+    }
+
+    tbody tr {
+        border-bottom: 1px solid #eee;
+        transition: background 0.2s ease;
+    }
+
+    tbody tr:hover {
+        background: #f9fafa;
+    }
+
+    td {
+        padding: 15px;
+        color: #555;
+    }
+
+    .invoice-number {
+        font-weight: 600;
+        color: #667eea;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .status-draft {
+        background: rgba(149, 165, 166, 0.1);
+        color: #95A5A6;
+    }
+
+    .status-issued {
+        background: rgba(52, 152, 219, 0.1);
+        color: #3498DB;
+    }
+
+    .status-paid {
+        background: rgba(39, 174, 96, 0.1);
+        color: #27AE60;
+    }
+
+    .amount {
+        font-weight: 600;
+        color: #667eea;
+    }
+
+    .action-links {
+        display: flex;
+        gap: 10px;
+    }
+
+    .action-link {
+        padding: 6px 12px;
+        background: #667eea;
+        color: white;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.2s ease;
+    }
+
+    .action-link:hover {
+        background: #764ba2;
+    }
+
+    .action-link.download {
+        background: #27AE60;
+    }
+
+    .action-link.download:hover {
+        background: #229954;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 8px;
+    }
+
+    @media (max-width: 768px) {
+        .invoices-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        table {
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 10px;
+        }
+
+        .action-links {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="invoices-container">
+    <div class="invoices-header">
+        <h1>My Invoices</h1>
+    </div>
+
+    {% if invoices %}
+    <div class="invoices-table">
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Invoice Number</th>
+                        <th>Check Request</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in invoices %}
+                    <tr>
+                        <td><span class="invoice-number">{{ invoice.invoice_number }}</span></td>
+                        <td>{{ invoice.background_check.request_id }}</td>
+                        <td><span class="amount">₦{{ invoice.amount }}</span></td>
+                        <td><span class="status-badge status-{{ invoice.status|lower }}">{{ invoice.get_status_display }}</span></td>
+                        <td>{{ invoice.created_at|date:"M d, Y" }}</td>
+                        <td>
+                            <div class="action-links">
+                                <a href="{% url 'check_detail' invoice.background_check.request_id %}" class="action-link">View</a>
+                                <a href="#download" class="action-link download">Download PDF</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+        <h2>No Invoices Yet</h2>
+        <p>You haven't generated any invoices yet. Create a background check to get started!</p>
+        <a href="{% url 'request_check' %}" class="btn btn-primary">Request Background Check</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,321 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}My Checks - {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .checks-container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 0 20px 40px;
+    }
+
+    .checks-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .checks-header h1 {
+        font-size: 2rem;
+    }
+
+    .filter-section {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 8px 16px;
+        border: 2px solid #eee;
+        background: white;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+    .filter-btn:hover {
+        border-color: #667eea;
+        color: #667eea;
+    }
+
+    .filter-btn.active {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+
+    .checks-table {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    thead tr {
+        background: #f8f9fa;
+        border-bottom: 2px solid #eee;
+    }
+
+    th {
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        color: #333;
+    }
+
+    tbody tr {
+        border-bottom: 1px solid #eee;
+        transition: background 0.2s ease;
+    }
+
+    tbody tr:hover {
+        background: #f9fafa;
+    }
+
+    td {
+        padding: 15px;
+        color: #555;
+    }
+
+    .request-id {
+        font-weight: 600;
+        color: #667eea;
+    }
+
+    .applicant-name {
+        font-weight: 500;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .status-pending {
+        background: rgba(243, 156, 18, 0.1);
+        color: #F39C12;
+    }
+
+    .status-under-review {
+        background: rgba(52, 152, 219, 0.1);
+        color: #3498DB;
+    }
+
+    .status-completed {
+        background: rgba(39, 174, 96, 0.1);
+        color: #27AE60;
+    }
+
+    .status-failed {
+        background: rgba(231, 76, 60, 0.1);
+        color: #E74C3C;
+    }
+
+    .action-links {
+        display: flex;
+        gap: 10px;
+    }
+
+    .action-link {
+        padding: 6px 12px;
+        background: #667eea;
+        color: white;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.2s ease;
+    }
+
+    .action-link:hover {
+        background: #764ba2;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 8px;
+    }
+
+    .empty-state h2 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .empty-state p {
+        color: #999;
+        margin-bottom: 20px;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 30px;
+    }
+
+    .pagination a,
+    .pagination span {
+        padding: 8px 12px;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #333;
+    }
+
+    .pagination a:hover {
+        border-color: #667eea;
+        color: #667eea;
+    }
+
+    .pagination .active {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+
+    @media (max-width: 768px) {
+        .checks-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .filter-section {
+            flex-direction: column;
+        }
+
+        table {
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 10px;
+        }
+
+        .action-links {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="checks-container">
+    <div class="checks-header">
+        <h1>My Background Checks</h1>
+        <a href="{% url 'request_check' %}" class="btn btn-primary">New Check</a>
+    </div>
+
+    <div class="filter-section">
+        <button class="filter-btn active" onclick="filterChecks('all')">All Checks</button>
+        <button class="filter-btn" onclick="filterChecks('PENDING')">Pending</button>
+        <button class="filter-btn" onclick="filterChecks('UNDER_REVIEW')">Under Review</button>
+        <button class="filter-btn" onclick="filterChecks('COMPLETED')">Completed</button>
+        <button class="filter-btn" onclick="filterChecks('FAILED')">Failed</button>
+    </div>
+
+    {% if check_requests %}
+    <div class="checks-table">
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Request ID</th>
+                        <th>Applicant</th>
+                        <th>Package</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for check in check_requests %}
+                    <tr>
+                        <td><span class="request-id">{{ check.request_id }}</span></td>
+                        <td><span class="applicant-name">{{ check.applicant_name }}</span></td>
+                        <td>{{ check.package.name }}</td>
+                        <td><span class="status-badge status-{{ check.status|lower }}">{{ check.get_status_display }}</span></td>
+                        <td>₦{{ check.total_amount }}</td>
+                        <td>{{ check.requested_at|date:"M d, Y" }}</td>
+                        <td>
+                            <div class="action-links">
+                                <a href="{% url 'check_detail' check.request_id %}" class="action-link">View</a>
+                                {% if check.status == 'PENDING' %}
+                                    <a href="{% url 'process_payment' check.request_id %}" class="action-link" style="background: #27AE60;">Pay</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if is_paginated %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">« First</a>
+            <a href="?page={{ page_obj.previous_page_number }}">‹ Previous</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <span class="active">{{ num }}</span>
+            {% else %}
+                <a href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Next ›</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">Last »</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+        <h2>No Background Checks Yet</h2>
+        <p>You haven't requested any background checks yet. Start your first verification today!</p>
+        <a href="{% url 'request_check' %}" class="btn btn-primary">Request Background Check</a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function filterChecks(status) {
+    const params = new URLSearchParams();
+    if (status !== 'all') {
+        params.append('status', status);
+    }
+    window.location.href = `{% url 'my_checks' %}${params.toString() ? '?' + params.toString() : ''}`;
+}
+</script>
+{% endblock %}

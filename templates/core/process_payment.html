@@ -1,0 +1,331 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Payment - {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px 40px;
+    }
+
+    .payment-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px 20px;
+        margin: -40px -20px 40px -20px;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .payment-header h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .payment-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+
+    .payment-section {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #eee;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        color: #999;
+        font-weight: 600;
+    }
+
+    .info-value {
+        color: #333;
+        text-align: right;
+        font-weight: 500;
+    }
+
+    .payment-methods {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .payment-option {
+        position: relative;
+    }
+
+    .payment-option input[type="radio"] {
+        display: none;
+    }
+
+    .payment-label {
+        display: block;
+        padding: 20px;
+        border: 2px solid #eee;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .payment-label:hover {
+        border-color: #667eea;
+        background: rgba(102, 126, 234, 0.02);
+    }
+
+    .payment-option input[type="radio"]:checked + .payment-label {
+        border-color: #667eea;
+        background: rgba(102, 126, 234, 0.1);
+    }
+
+    .payment-icon {
+        font-size: 2rem;
+        width: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .payment-info {
+        flex: 1;
+    }
+
+    .payment-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .payment-desc {
+        font-size: 0.85rem;
+        color: #999;
+    }
+
+    .summary-box {
+        background: linear-gradient(135deg, #f5f7fa 0%, #f9fafb 100%);
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+    }
+
+    .summary-total {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #667eea;
+        padding-top: 10px;
+        border-top: 2px solid #e0e0e0;
+        margin-top: 10px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+    }
+
+    .btn-submit {
+        flex: 1;
+    }
+
+    .security-info {
+        background: rgba(39, 174, 96, 0.1);
+        border-left: 4px solid #27AE60;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 20px;
+        display: flex;
+        gap: 15px;
+        align-items: start;
+    }
+
+    .security-icon {
+        font-size: 1.5rem;
+    }
+
+    .security-text {
+        font-size: 0.9rem;
+        color: #27AE60;
+    }
+
+    @media (max-width: 768px) {
+        .payment-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .payment-label {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .payment-icon {
+            width: auto;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+    <div class="payment-header">
+        <h1>Complete Payment</h1>
+        <p>Secure payment for your background check request</p>
+    </div>
+
+    <div class="payment-grid">
+        <!-- Payment Methods -->
+        <div class="payment-section">
+            <h2 class="section-title">Select Payment Method</h2>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                <div class="payment-methods">
+                    <div class="payment-option">
+                        <input type="radio" id="credit_card" name="payment_method" value="CREDIT_CARD" required>
+                        <label for="credit_card" class="payment-label">
+                            <span class="payment-icon">💳</span>
+                            <div class="payment-info">
+                                <div class="payment-name">Credit Card</div>
+                                <div class="payment-desc">Visa, Mastercard, American Express</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="payment-option">
+                        <input type="radio" id="debit_card" name="payment_method" value="DEBIT_CARD">
+                        <label for="debit_card" class="payment-label">
+                            <span class="payment-icon">🏧</span>
+                            <div class="payment-info">
+                                <div class="payment-name">Debit Card</div>
+                                <div class="payment-desc">Direct payment from your bank account</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="payment-option">
+                        <input type="radio" id="paypal" name="payment_method" value="PAYPAL">
+                        <label for="paypal" class="payment-label">
+                            <span class="payment-icon">🅿️</span>
+                            <div class="payment-info">
+                                <div class="payment-name">PayPal</div>
+                                <div class="payment-desc">Fast and secure PayPal payment</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="payment-option">
+                        <input type="radio" id="bank_transfer" name="payment_method" value="BANK_TRANSFER">
+                        <label for="bank_transfer" class="payment-label">
+                            <span class="payment-icon">🏦</span>
+                            <div class="payment-info">
+                                <div class="payment-name">Bank Transfer</div>
+                                <div class="payment-desc">Direct bank-to-bank transfer</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="{% url 'check_detail' check_request.request_id %}" class="btn btn-secondary btn-submit">Cancel</a>
+                    <button type="submit" class="btn btn-primary btn-submit">Complete Payment</button>
+                </div>
+            </form>
+
+            <div class="security-info">
+                <span class="security-icon">🔒</span>
+                <span class="security-text">Your payment information is secured with 256-bit encryption. We never store your credit card details.</span>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="payment-section">
+            <h2 class="section-title">Order Summary</h2>
+
+            <div class="info-row">
+                <span class="info-label">Request ID</span>
+                <span class="info-value">{{ check_request.request_id }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Applicant</span>
+                <span class="info-value">{{ check_request.applicant_name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Package</span>
+                <span class="info-value">{{ check_request.package.name }}</span>
+            </div>
+
+            <div style="margin: 25px 0;">
+                <h3 style="margin-bottom: 15px; font-weight: 600;">Services Included</h3>
+                <div style="display: grid; gap: 10px;">
+                    {% for service in check_request.selected_services.all %}
+                    <div style="padding: 10px; background: #f8f9fa; border-radius: 6px; border-left: 3px solid #667eea;">
+                        {{ service.get_name_display }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="summary-box">
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>₦{{ check_request.total_amount }}</span>
+                </div>
+                {% if check_request.package.discount_percentage > 0 %}
+                <div class="summary-row" style="color: #27AE60;">
+                    <span>Discount ({{ check_request.package.discount_percentage }}%)</span>
+                    <span>-₦{{ check_request.package.get_discount_amount }}</span>
+                </div>
+                {% endif %}
+                <div class="summary-row">
+                    <span>Taxes</span>
+                    <span>₦0.00</span>
+                </div>
+                <div class="summary-total">
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #999; margin-bottom: 5px;">TOTAL DUE</div>
+                    <div>₦{{ check_request.total_amount }}</div>
+                </div>
+            </div>
+
+            <div style="background: #f0f0f0; padding: 15px; border-radius: 6px; font-size: 0.85rem; color: #666; line-height: 1.6;">
+                <strong>Processing Time:</strong> {{ check_request.package.get_processing_time_display }} business days<br>
+                <strong>Support:</strong> 24/7 Customer Support Available<br>
+                <strong>Guarantee:</strong> 100% Money-Back Guarantee
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

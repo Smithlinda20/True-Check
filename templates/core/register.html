@@ -1,0 +1,236 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Register - {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 500px;
+        margin: 60px auto;
+        padding: 0 20px;
+    }
+
+    .auth-card {
+        background: white;
+        padding: 50px 30px;
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        animation: slideUp 0.5s ease;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .auth-header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+
+    .auth-header p {
+        color: #999;
+    }
+
+    .user-type-selector {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .user-type-option {
+        flex: 1;
+    }
+
+    .user-type-option input[type="radio"] {
+        display: none;
+    }
+
+    .user-type-label {
+        display: block;
+        padding: 15px;
+        border: 2px solid #eee;
+        border-radius: 8px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .user-type-option input[type="radio"]:checked + .user-type-label {
+        border-color: #667eea;
+        background: rgba(102, 126, 234, 0.05);
+    }
+
+    .company-field {
+        display: none;
+    }
+
+    .company-field.visible {
+        display: block;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .auth-divider {
+        text-align: center;
+        margin: 30px 0;
+        position: relative;
+    }
+
+    .auth-divider::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: 1px;
+        background: #eee;
+    }
+
+    .auth-divider span {
+        background: white;
+        padding: 0 15px;
+        color: #999;
+        position: relative;
+    }
+
+    .auth-link {
+        text-align: center;
+        margin-top: 30px;
+        color: #666;
+    }
+
+    .auth-link a {
+        font-weight: 600;
+        text-decoration: underline;
+    }
+
+    .password-strength {
+        font-size: 0.85rem;
+        margin-top: 5px;
+        font-weight: 600;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Create Account</h1>
+            <p>Join {{ site_name }} and start verifying</p>
+        </div>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <label style="font-weight: 600; margin-bottom: 15px; display: block;">Account Type</label>
+            <div class="user-type-selector">
+                <div class="user-type-option">
+                    <input type="radio" id="type_employee" name="user_type" value="EMPLOYEE" checked required>
+                    <label for="type_employee" class="user-type-label">
+                        <strong>Individual</strong><br>
+                        <span style="font-size: 0.9rem; color: #999;">Employee</span>
+                    </label>
+                </div>
+                <div class="user-type-option">
+                    <input type="radio" id="type_employer" name="user_type" value="HR_EMPLOYER" required>
+                    <label for="type_employer" class="user-type-label">
+                        <strong>Company</strong><br>
+                        <span style="font-size: 0.9rem; color: #999;">HR/Employer</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group company-field" id="companyField">
+                <label for="id_company_name">Company Name</label>
+                <input type="text" id="id_company_name" name="company_name" placeholder="Your company name">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="id_email">Email Address *</label>
+                    <input type="email" id="id_email" name="email" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="id_username">Username *</label>
+                    <input type="text" id="id_username" name="username" required placeholder="username">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="id_phone">Phone Number</label>
+                <input type="tel" id="id_phone" name="phone" placeholder="+1 (555) 000-0000">
+            </div>
+
+            <div class="form-group">
+                <label for="id_password">Password *</label>
+                <input type="password" id="id_password" name="password" required placeholder="••••••••" minlength="8">
+                <div class="password-strength"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="id_password_confirm">Confirm Password *</label>
+                <input type="password" id="id_password_confirm" name="password_confirm" required placeholder="••••••••">
+            </div>
+
+            <div class="form-group" style="margin: 25px 0;">
+                <label style="display: flex; align-items: center; gap: 10px; font-weight: normal; margin-bottom: 0;">
+                    <input type="checkbox" required>
+                    <span>I agree to the Terms & Conditions and Privacy Policy</span>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+            </div>
+        </form>
+
+        <div class="auth-divider">
+            <span>Already have an account?</span>
+        </div>
+
+        <div class="auth-link">
+            <a href="{% url 'login' %}">Sign in here</a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const employerRadio = document.getElementById('type_employer');
+    const employeeRadio = document.getElementById('type_employee');
+    const companyField = document.getElementById('companyField');
+    const companyInput = document.getElementById('id_company_name');
+
+    function toggleCompanyField() {
+        if (employerRadio.checked) {
+            companyField.classList.add('visible');
+            companyInput.required = true;
+        } else {
+            companyField.classList.remove('visible');
+            companyInput.required = false;
+        }
+    }
+
+    employerRadio.addEventListener('change', toggleCompanyField);
+    employeeRadio.addEventListener('change', toggleCompanyField);
+});
+</script>
+{% endblock %}

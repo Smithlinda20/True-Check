@@ -1,0 +1,205 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Notifications - {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .notifications-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 0 20px 40px;
+    }
+
+    .notifications-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .notifications-header h1 {
+        font-size: 2rem;
+    }
+
+    .mark-read-btn {
+        padding: 8px 16px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.2s ease;
+    }
+
+    .mark-read-btn:hover {
+        background: #764ba2;
+    }
+
+    .notification-item {
+        background: white;
+        padding: 20px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border-left: 4px solid #667eea;
+        transition: all 0.2s ease;
+    }
+
+    .notification-item:hover {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .notification-item.unread {
+        background: rgba(102, 126, 234, 0.05);
+        border-left-color: #667eea;
+    }
+
+    .notification-item.read {
+        opacity: 0.75;
+    }
+
+    .notification-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 10px;
+    }
+
+    .notification-title {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .notification-type {
+        display: inline-block;
+        padding: 4px 12px;
+        background: #667eea;
+        color: white;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .notification-message {
+        color: #666;
+        margin-bottom: 10px;
+        line-height: 1.6;
+    }
+
+    .notification-time {
+        color: #999;
+        font-size: 0.9rem;
+    }
+
+    .notification-type.request {
+        background: #3498DB;
+    }
+
+    .notification-type.payment {
+        background: #27AE60;
+    }
+
+    .notification-type.result {
+        background: #9B59B6;
+    }
+
+    .notification-type.status {
+        background: #F39C12;
+    }
+
+    .notification-type.system {
+        background: #95A5A6;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 8px;
+    }
+
+    @media (max-width: 768px) {
+        .notifications-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .notification-header {
+            flex-direction: column;
+        }
+
+        .notification-type {
+            align-self: flex-start;
+            margin-top: 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="notifications-container">
+    <div class="notifications-header">
+        <h1>Notifications</h1>
+        {% if unread_count %}
+        <button class="mark-read-btn" onclick="markAllAsRead()">Mark All as Read</button>
+        {% endif %}
+    </div>
+
+    {% if notifications %}
+        {% for notification in notifications %}
+        <div class="notification-item {% if not notification.is_read %}unread{% else %}read{% endif %}">
+            <div class="notification-header">
+                <div style="flex: 1;">
+                    <div class="notification-title">{{ notification.title }}</div>
+                </div>
+                <span class="notification-type notification-{{ notification.get_notification_type_display|lower }}">
+                    {{ notification.get_notification_type_display }}
+                </span>
+            </div>
+            <div class="notification-message">{{ notification.message }}</div>
+            <div class="notification-time">{{ notification.created_at|timesince }} ago</div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="empty-state">
+        <h2>No Notifications</h2>
+        <p>You're all caught up! Check back later for updates on your background checks and account activities.</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function markAllAsRead() {
+    fetch('{% url "notifications" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: 'mark_all_read' })
+    })
+    .then(() => location.reload())
+    .catch(error => console.error('Error:', error));
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

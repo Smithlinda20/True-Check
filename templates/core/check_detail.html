@@ -1,0 +1,273 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Check Details - {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .detail-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px 20px;
+        margin-bottom: 40px;
+    }
+
+    .detail-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 20px 40px;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    .detail-section {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #eee;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        color: #999;
+        font-weight: 600;
+    }
+
+    .info-value {
+        color: #333;
+        text-align: right;
+        font-weight: 500;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .status-pending {
+        background: rgba(243, 156, 18, 0.1);
+        color: #F39C12;
+    }
+
+    .status-under-review {
+        background: rgba(52, 152, 219, 0.1);
+        color: #3498DB;
+    }
+
+    .status-completed {
+        background: rgba(39, 174, 96, 0.1);
+        color: #27AE60;
+    }
+
+    .status-failed {
+        background: rgba(231, 76, 60, 0.1);
+        color: #E74C3C;
+    }
+
+    .service-tag {
+        display: inline-block;
+        padding: 6px 12px;
+        background: #f0f0f0;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .timeline {
+        margin-top: 30px;
+    }
+
+    .timeline-item {
+        padding: 20px;
+        border-left: 3px solid #eee;
+        margin-bottom: 15px;
+    }
+
+    .timeline-item.active {
+        border-left-color: #667eea;
+        background: rgba(102, 126, 234, 0.05);
+    }
+
+    .timeline-title {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .timeline-date {
+        font-size: 0.85rem;
+        color: #999;
+    }
+
+    @media (max-width: 768px) {
+        .detail-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-header">
+    <div class="detail-container">
+        <h1 style="font-size: 2rem; margin-bottom: 15px;">Request Details</h1>
+        <div style="font-size: 1.3rem; margin-bottom: 10px;">{{ check_request.request_id }}</div>
+        <div class="status-badge status-{{ check_request.status|lower }}">{{ check_request.get_status_display }}</div>
+    </div>
+</div>
+
+<div class="detail-container">
+    <div class="detail-grid">
+        <!-- Main Details -->
+        <div class="detail-section">
+            <h2 class="section-title">Applicant Information</h2>
+            
+            <div class="info-row">
+                <span class="info-label">Name</span>
+                <span class="info-value">{{ check_request.applicant_name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Email</span>
+                <span class="info-value">{{ check_request.applicant_email }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Phone</span>
+                <span class="info-value">{{ check_request.applicant_phone }}</span>
+            </div>
+            {% if check_request.company_name %}
+            <div class="info-row">
+                <span class="info-label">Company</span>
+                <span class="info-value">{{ check_request.company_name }}</span>
+            </div>
+            {% endif %}
+            {% if check_request.position_applied %}
+            <div class="info-row">
+                <span class="info-label">Position</span>
+                <span class="info-value">{{ check_request.position_applied }}</span>
+            </div>
+            {% endif %}
+
+            <h2 class="section-title" style="margin-top: 30px;">Selected Services</h2>
+            <div>
+                {% for service in check_request.selected_services.all %}
+                    <span class="service-tag">{{ service.get_name_display }}</span>
+                {% endfor %}
+            </div>
+
+            <h2 class="section-title" style="margin-top: 30px;">Timeline</h2>
+            <div class="timeline">
+                <div class="timeline-item active">
+                    <div class="timeline-title">Request Created</div>
+                    <div class="timeline-date">{{ check_request.requested_at|date:"M d, Y H:i" }}</div>
+                </div>
+                {% if check_request.started_at %}
+                <div class="timeline-item active">
+                    <div class="timeline-title">Processing Started</div>
+                    <div class="timeline-date">{{ check_request.started_at|date:"M d, Y H:i" }}</div>
+                </div>
+                {% endif %}
+                {% if check_request.completed_at %}
+                <div class="timeline-item active">
+                    <div class="timeline-title">Completed</div>
+                    <div class="timeline-date">{{ check_request.completed_at|date:"M d, Y H:i" }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div>
+            <div class="detail-section">
+                <h2 class="section-title">Request Summary</h2>
+                
+                <div class="info-row">
+                    <span class="info-label">Package</span>
+                    <span class="info-value">{{ check_request.package.name }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Amount</span>
+                    <span class="info-value" style="font-size: 1.3rem; color: #0F766E;">₦{{ check_request.total_amount }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Status</span>
+                    <span class="info-value">{{ check_request.get_status_display }}</span>
+                </div>
+
+                <div class="action-buttons">
+                    {% if check_request.status == 'PENDING' %}
+                        <a href="{% url 'process_payment' check_request.request_id %}" class="btn btn-primary btn-block">Pay Now</a>
+                    {% endif %}
+                    <a href="{% url 'my_checks' %}" class="btn btn-secondary btn-block">Back to Checks</a>
+                </div>
+            </div>
+
+            {% if payment %}
+            <div class="detail-section" style="margin-top: 20px;">
+                <h2 class="section-title">Payment</h2>
+                <div class="info-row">
+                    <span class="info-label">Payment ID</span>
+                    <span class="info-value" style="font-size: 0.9rem;">{{ payment.payment_id }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Status</span>
+                    <span class="info-value">{{ payment.get_status_display }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Method</span>
+                    <span class="info-value">{{ payment.get_payment_method_display }}</span>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if result %}
+            <div class="detail-section" style="margin-top: 20px;">
+                <h2 class="section-title">Results</h2>
+                <div class="info-row">
+                    <span class="info-label">Status</span>
+                    <span class="info-value">{{ result.get_status_display }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Risk Level</span>
+                    <span class="info-value">{{ result.get_risk_level_display }}</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
