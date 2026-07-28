@@ -68,8 +68,11 @@ MIDDLEWARE = [
 ]
 
 # WhiteNoise configuration for static files
+# WhiteNoise configuration for static files
 if not DEBUG:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    # This engine will ignore missing files gracefully instead of throwing a 500 error
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
 
 ROOT_URLCONF = 'Truecheck.urls'
 
