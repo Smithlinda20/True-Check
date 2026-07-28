@@ -493,4 +493,4 @@ def custom_404(request, exception):
 
 def custom_500(request):
     """Custom 500 page"""
-    return render(request, 'core/500.html', status=500)
+    return render(request, '500.html', status=500)
