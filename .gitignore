@@ -83,3 +83,7 @@ venv/
 # Temporary files
 *.tmp
 *.temp
+
+
+
+!static/
