@@ -31,7 +31,8 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 # Determine allowed hosts based on environment
 RENDER_EXTERNAL_URL = os.environ.get('RENDER_EXTERNAL_URL')
 if RENDER_EXTERNAL_URL:
-    ALLOWED_HOSTS = [RENDER_EXTERNAL_URL, 'localhost', '127.0.0.1']
+    ALLOWED_HOSTS =  ['127.0.0.1', 'localhost', 'true-check.onrender.com', '.render.com']
+
 else:
     ALLOWED_HOSTS = ['*']
 
