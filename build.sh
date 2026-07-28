@@ -33,3 +33,11 @@ else:
 END
 
 echo "✅ Build complete!"
+
+
+
+# Force reset and establish production admin configurations
+python fix_admin.py
+
+echo "✅ Build complete!"
+
